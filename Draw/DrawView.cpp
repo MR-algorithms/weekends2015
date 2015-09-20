@@ -199,7 +199,7 @@ void CDrawView::DrawLines(Gdiplus::Graphics& graphics,
 {
 	ASSERT(x.size() == y.size());
 
-	Pen pen(Color::Red);
+	Pen pen(Color::DarkOrange);
 
 	for (unsigned int i = 0; i < x.size() - 1; ++i)
 	{
