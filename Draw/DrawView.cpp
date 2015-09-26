@@ -25,6 +25,7 @@
 #include <gdiplus.h>
 #include "MrSimulator.h"
 #include "DataGenerator.h"
+#include "CoordinateTransformer.h"
 using namespace Gdiplus;
 
 #ifdef _DEBUG
@@ -96,12 +97,12 @@ void CDrawView::Draw1(Graphics& graphics)
 	auto image_part = GetImage(m);
 	auto amplitude = GetAmplitude(m);
 
-	auto x_coodinates = CoordinateTransform(0, 10.0, 0, client_rect.Width(), time);
-	auto y_coodinates = CoordinateTransform(-100.0, 100.0, client_rect.Height() / 2, 0, real_part);
+	auto x_coodinates = CCoordinateTransformer::CoordinateTransform(0, client_rect.Width(), time);
+	auto y_coodinates = CCoordinateTransformer::CoordinateTransform(client_rect.Height() / 2, 0, real_part);
 
 //	auto y_coodinate_imaginary = CoordinateTransform(-100.0, 100.0,
 //		client_rect.Height(), client_rect.Height() / 2, image_part);
-	auto y_coodinate_amplitude = CoordinateTransform(0, 100.0, client_rect.Height(), client_rect.Height() / 2, amplitude);
+	auto y_coodinate_amplitude = CCoordinateTransformer::CoordinateTransform(client_rect.Height(), client_rect.Height() / 2, amplitude);
 
 	DrawLines(graphics, x_coodinates, y_coodinates);
 	DrawLines(graphics, x_coodinates, y_coodinate_amplitude);
@@ -136,8 +137,8 @@ void CDrawView::Draw2(Graphics& graphics)
 	auto real_part = GetReal(m);
 	auto image_part = GetImage(m);
 
-	auto x_coodinates = CoordinateTransform(-100, 100, 0, client_rect.Width(), real_part);
-	auto y_coodinates = CoordinateTransform(-100.0, 100.0, client_rect.Height(), 0, image_part);
+	auto x_coodinates = CCoordinateTransformer::CoordinateTransform(0, client_rect.Width(), real_part);
+	auto y_coodinates = CCoordinateTransformer::CoordinateTransform(client_rect.Height(), 0, image_part);
 
 	DrawLines(buffer_graphics, x_coodinates, y_coodinates);
 
@@ -177,24 +178,6 @@ std::vector<double> CDrawView::GetAmplitude(const std::vector<std::complex<doubl
 	return output;
 }
 
-std::vector<double> CDrawView::CoordinateTransform(double source_min,
-	double source_max,
-	double dest_min,
-	double dest_max,
-	const std::vector<double>& source)
-{
-	std::vector<double> output(source.size());
-
-	double a = (dest_max - dest_min) / (source_max - source_min);
-	double b = -source_min * a + dest_min;
-
-	for (unsigned int i = 0; i < source.size(); ++i)
-	{
-		output[i] = a * source[i] + b;
-	}
-
-	return output;
-}
 
 void CDrawView::DrawLines(Gdiplus::Graphics& graphics,
 	const std::vector<double>& x,

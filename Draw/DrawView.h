@@ -50,8 +50,7 @@ protected:
 	std::vector<double> GetReal(const std::vector<std::complex<double>>& source);
 	std::vector<double> GetImage(const std::vector<std::complex<double>>& source);
 	std::vector<double> GetAmplitude(const std::vector<std::complex<double>>& source);
-	std::vector<double> CoordinateTransform(double source_min, double source_max, double dest_min, double dest_max,
-		const std::vector<double>& source);
+
 	void DrawLines(Gdiplus::Graphics& graphics, const std::vector<double>& x, const std::vector<double>& y);
 	void Draw1(Gdiplus::Graphics& graphics);
 	void Draw2(Gdiplus::Graphics& graphics);

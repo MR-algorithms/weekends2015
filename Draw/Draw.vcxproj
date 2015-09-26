@@ -101,6 +101,7 @@
   <ItemGroup>
     <ClInclude Include="ChildFrm.h" />
     <ClInclude Include="ClassView.h" />
+    <ClInclude Include="CoordinateTransformer.h" />
     <ClInclude Include="DataGenerator.h" />
     <ClInclude Include="Draw.h" />
     <ClInclude Include="DrawDoc.h" />
@@ -118,6 +119,7 @@
   <ItemGroup>
     <ClCompile Include="ChildFrm.cpp" />
     <ClCompile Include="ClassView.cpp" />
+    <ClCompile Include="CoordinateTransformer.cpp" />
     <ClCompile Include="DataGenerator.cpp" />
     <ClCompile Include="Draw.cpp" />
     <ClCompile Include="DrawDoc.cpp" />
