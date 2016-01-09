@@ -169,6 +169,7 @@
 #define MCD_BLDTRUNC(s,n) s.resize(n)
 #else // not STL, i.e. MFC
 
+#undef NO_MFC
 #ifdef NO_MFC
 // afx.h provides CString, to avoid "WINVER not defined" #include stdafh.x in Markup.cpp
 #include <atlstr.h>

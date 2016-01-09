@@ -126,7 +126,7 @@ void CCompositShape::OnEndMove()
 		for (size_t i = 0; i < _relative_postions.size(); ++i)
 		{
 			_children[i]->OnEndMove();
-			_relative_postions[i].X = (1.0 - _relative_postions[i].X) - _relative_postions[i].Width;
+			_relative_postions[i].X = (1.0f - _relative_postions[i].X) - _relative_postions[i].Width;
 		}
 	}
 	if (_rect.Height < 0)
@@ -134,7 +134,7 @@ void CCompositShape::OnEndMove()
 		for (size_t i = 0; i < _relative_postions.size(); ++i)
 		{
 			_children[i]->OnEndMove();
-			_relative_postions[i].Y = (1.0 - _relative_postions[i].Y) - _relative_postions[i].Height;
+			_relative_postions[i].Y = (1.0f - _relative_postions[i].Y) - _relative_postions[i].Height;
 		}
 	}
 

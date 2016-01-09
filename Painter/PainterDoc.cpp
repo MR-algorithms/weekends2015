@@ -30,6 +30,7 @@
 #include "Ellipse.h"
 #include "CompositShape.h"
 #include <iterator>
+#include "../Utilities/xml.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -37,6 +38,7 @@
 
 using namespace std;
 using namespace Gdiplus;
+using namespace Utilities;
 
 // CPainterDoc
 
@@ -76,44 +78,60 @@ void CPainterDoc::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		ar << static_cast<size_t>(_shapes.size());
-		for (auto shape = _shapes.begin(); shape != _shapes.end(); ++shape)
+// 		ar << static_cast<size_t>(_shapes.size());
+// 		for (auto shape = _shapes.begin(); shape != _shapes.end(); ++shape)
+// 		{
+// 			(*shape)->Save(ar);
+// 		}
+		CXml xml(_T("Shapes"));
+		xml.SetIntegerAttrib(_T("Count"), _shapes.size());
+
+		for (auto shape : _shapes)
 		{
-			(*shape)->Save(ar);
+			auto element = xml.AddElement(_T("Shape"));
+			shape->Save(*element);
 		}
+		ar << xml.GetDoc();
 	}
 	else
 	{
 		_shapes.clear();
 
-		size_t size;
-		ar >> size;
+		CString xml_string;
+		ar >> xml_string;
 
-		Point point1, point2;
+		CXml xml;
+		xml.SetDoc(xml_string);
+
+		unsigned count(xml.GetIntegerAttrib(_T("Count")));
+		auto shape_elements = xml.GetChildElements();
 
 		shared_ptr<CShape> shape;
-		for (size_t i = 0; i < size; ++i)
+		for (unsigned int i = 0; i < count; ++i)
 		{
-			int type;
-			ar >> type;
-			switch (type)
+			auto type = shape_elements[i]->GetAttrib(_T("Type"));
+			if (type == _T("Rectangle"))
 			{
-			case ShapeLine:
-				shape = shared_ptr<CShape>(new CLine);
-				break;
-			case ShapeRectangle:
 				shape = shared_ptr<CShape>(new CRectangle);
-				break;
-			case ShapeEllipse:
-				shape = shared_ptr<CShape>(new CEllipse);
-				break;
-			case ShapePolygon:
-				shape = shared_ptr<CShape>(new CPolygon);
-				break;
-			default:
-				ASSERT(0);
 			}
-			shape->Load(ar);
+			else if (type == _T("Ellipse"))
+			{
+				shape = shared_ptr<CShape>(new CEllipse);
+			}
+			else if (type == _T("Line"))
+			{
+				shape = shared_ptr<CShape>(new CLine);
+			}
+			else if (type == _T("Polygon"))
+			{
+				shape = shared_ptr<CShape>(new CPolygon);
+			}
+			else if (type == _T("Composite"))
+			{
+				shape = shared_ptr<CShape>(new CCompositShape);
+			}
+
+			shape->Load(*shape_elements[i]);
 			_shapes.push_back(shape);
 		}
 	}

@@ -43,6 +43,10 @@ public:
 	virtual void Draw(Gdiplus::Graphics& graphics);
 	virtual void Save(CArchive& ar);
 
+	virtual void Save(Utilities::CXmlElement& element) override;
+
+	virtual void Load(Utilities::CXmlElement& element) override;
+
 private:
 	Gdiplus::Point _top_left;
 	Gdiplus::Size _size;

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Shape.h"
 #include <Gdiplus.h>
+#include "..\Utilities\xml.h"
 
 using namespace Gdiplus;
 
@@ -49,6 +50,32 @@ void CShape::Load(CArchive& ar)
 
 	ar >> color;
 	_border_color = Color(color);
+}
+
+void CShape::Save(Utilities::CXmlElement& element)
+{
+	element.SetIntegerAttrib(_T("Left"), _rect.GetLeft());
+	element.SetIntegerAttrib(_T("Top"), _rect.GetTop());
+	element.SetIntegerAttrib(_T("Width"), _rect.Width);
+	element.SetIntegerAttrib(_T("Height"), _rect.Height);
+
+	element.SetIntegerAttrib(_T("BorderColor"), int(_border_color.ToCOLORREF()));
+	element.SetIntegerAttrib(_T("FillColor"), int(_fill_color.ToCOLORREF()));
+}
+
+void CShape::Load(Utilities::CXmlElement& element)
+{
+	auto left = element.GetIntegerAttrib(_T("Left"));
+	auto top = element.GetIntegerAttrib(_T("Top"));
+	auto width = element.GetIntegerAttrib(_T("Width"));
+	auto height = element.GetIntegerAttrib(_T("Height"));
+	_rect = Rect(left, top, width, height);
+
+	auto border_color = element.GetIntegerAttrib(_T("BorderColor"));
+	_border_color.SetFromCOLORREF(border_color);
+
+	auto fill_color = element.GetIntegerAttrib(_T("FillColor"));
+	_fill_color.SetFromCOLORREF(fill_color);
 }
 
 void CShape::SetBorderColor(Gdiplus::Color border_color)

@@ -132,14 +132,14 @@ void CPolygon::OnEndMove()
 	{
 		for (size_t i = 0; i < _relative_points.size(); ++i)
 		{
-			_relative_points[i].X = 1.0 - _relative_points[i].X;
+			_relative_points[i].X = 1.0f - _relative_points[i].X;
 		}
 	}
 	if (_rect.Height < 0)
 	{
 		for (size_t i = 0; i < _relative_points.size(); ++i)
 		{
-			_relative_points[i].Y = 1.0 - _relative_points[i].Y;
+			_relative_points[i].Y = 1.0f - _relative_points[i].Y;
 		}
 	}
 
@@ -176,7 +176,7 @@ int CPolygon::HitTest(const Gdiplus::Point& point)
 		}
 	}
 
-	CShape::HitTest(point);
+	return CShape::HitTest(point);
 }
 
 void CPolygon::Move(int handle_to_move, int cx, int cy)

@@ -58,7 +58,7 @@ int CLine::HitTest(const Gdiplus::Point& point)
 
 	double line_value = sqrt(a*a + b*b) + sqrt(c*c + d*d);
 	double line_value2 = sqrt(w*w + h*h);
-	double s = abs(line_value - line_value2);
+	double s = fabs(line_value - line_value2);
 
 	
 	if (s>=1 && !_selected)

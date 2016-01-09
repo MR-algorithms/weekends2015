@@ -7,7 +7,6 @@
 // This software is provided "as is", with no warranty.
 //
 #include <stdio.h>
-#define NO_MFC
 
 #include "Markup.h"
 

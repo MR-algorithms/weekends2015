@@ -6,14 +6,18 @@ Author:	Yang Guang, gyang@phy.ecnu.edu.cn
 Purpose:
 Copyright: Magnetic Resonance Lab., East China Normal University
 *********************************************************************/
-#define NO_MFC
+
 #include "xml.h"
 
-#include <boost/tokenizer.hpp>
 #include <cassert>
 #include <sstream>
 
+#define NO_BOOST
+
+#ifndef NO_BOOST
+#include <boost/tokenizer.hpp>
 using namespace boost;
+#endif
 
 using Utilities::CXml;
 using Utilities::CXmlElement;
@@ -403,6 +407,7 @@ ATL::CTime CXmlElement::GetTime() const
 	return StringToTime(GetData());
 }
 
+#ifndef NO_BOOST
 void CXmlElement::GetIntegers(std::vector<int>& values) const
 {
 	CString data = GetData();
@@ -439,6 +444,7 @@ std::vector<double> CXmlElement::GetFloats() const
 
 	return values;
 }
+#endif
 void CXmlElement::SetInteger(int value)
 {
 	assert(_children.empty());

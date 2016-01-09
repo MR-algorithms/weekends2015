@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Rectangle.h"
+#include "..\Utilities\xml.h"
 
 using namespace Gdiplus;
 
@@ -38,5 +39,16 @@ void CRectangle::Save(CArchive& ar)
 {
 	ar << int(ShapeRectangle);
 	__super::Save(ar);
+}
+
+void CRectangle::Save(Utilities::CXmlElement& element)
+{
+	__super::Save(element);
+	element.SetAttrib(_T("Type"), _T("Rectangle"));
+}
+
+void CRectangle::Load(Utilities::CXmlElement& element)
+{
+	__super::Load(element);
 }
 

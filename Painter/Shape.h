@@ -2,6 +2,8 @@
 
 #include <Gdiplus.h>
 
+namespace Utilities { class CXmlElement; }
+
 enum ShapeType
 {
 	ShapeLine = 1,
@@ -30,8 +32,12 @@ public:
 	virtual ~CShape();
 
 	virtual void Draw(Gdiplus::Graphics& graphics) = 0;
+
 	virtual void Save(CArchive& ar);
 	virtual void Load(CArchive& ar);
+	virtual void Save(Utilities::CXmlElement& element);
+	virtual void Load(Utilities::CXmlElement& element);
+
 	virtual int HitTest(const Gdiplus::Point& point);
 	virtual void Move(int handle_to_move, int cx, int cy);
 	virtual void OnEndMove();
