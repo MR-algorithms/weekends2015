@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "Polygon.h"
+#include "..\Utilities\xml.h"
+#include <stdlib.h>
+
 
 using namespace Gdiplus;
 
@@ -42,6 +45,7 @@ void CPolygon::Save(CArchive& ar)
 	}
 }
 
+
 void CPolygon::Load(CArchive& ar)
 {
 	CShape::Load(ar);
@@ -53,6 +57,73 @@ void CPolygon::Load(CArchive& ar)
 	{
 		ar >> _points[i].X >> _points[i].Y;
 	}
+}
+
+void CharToTchar(const char * cchar, TCHAR * tchar)
+{
+	int iLength;
+
+	iLength = MultiByteToWideChar(CP_ACP, 0, cchar, strlen(cchar) + 1, NULL, 0);
+	MultiByteToWideChar(CP_ACP, 0, cchar, strlen(cchar) + 1, tchar, iLength);
+}
+
+void CPolygon::Save(Utilities::CXmlElement& element)
+{
+	element.SetAttrib(_T("Type"), _T("Polygon"));
+	element.SetIntegerAttrib(_T("PointCount"), _points.size());
+	for (auto i = 0; i < _points.size(); ++i)
+	{
+		//value size_t type converts to const char* type 
+		char* Indexx=new char;
+		itoa(i, Indexx, 10);
+		strcat(Indexx, "X");
+		const char* Ix = Indexx;
+		char* Indexy = new char;
+		itoa(i, Indexy, 10);
+		strcat(Indexy, "Y");
+		const char* Iy = Indexy;
+		TCHAR* tcharx = new TCHAR;
+		TCHAR* tchary = new TCHAR;
+		CharToTchar(Ix, tcharx);
+		CharToTchar(Iy, tchary);
+		//end
+		element.SetIntegerAttrib(tcharx, _points[i].X);
+		element.SetIntegerAttrib(tchary, _points[i].Y);
+	}
+	element.SetIntegerAttrib(_T("BorderColor"), int(_border_color.ToCOLORREF()));
+	element.SetIntegerAttrib(_T("FillColor"), int(_fill_color.ToCOLORREF()));
+}
+
+void CPolygon::Load(Utilities::CXmlElement& element)
+{
+	__super::Load(element);
+	auto point_count = element.GetIntegerAttrib(_T("PointCount"));
+	_points.clear();
+	Gdiplus::Point point;
+	for (size_t i = 0; i < point_count;++i)
+	{
+		//value size_t type converts to const char* type 
+		char* Indexx = new char;
+		itoa(i, Indexx, 10);
+		strcat(Indexx, "X");
+		const char* Ix = Indexx;
+		char* Indexy = new char;
+		itoa(i, Indexy, 10);
+		strcat(Indexy, "Y");
+		TCHAR* tcharx = new TCHAR;
+		TCHAR* tchary = new TCHAR;
+		const char* Iy = Indexy;
+		CharToTchar(Ix, tcharx);
+		CharToTchar(Iy, tchary);
+		//end
+		auto X = element.GetIntegerAttrib(tcharx);
+		auto Y = element.GetIntegerAttrib(tchary);
+		point.X = X;
+		point.Y = Y;
+		_points.push_back(point);
+	}
+	Finalize();
+
 }
 
 void CPolygon::AddPoint(Gdiplus::Point point)

@@ -4,6 +4,7 @@
 #include <vector>
 #include <gdiplus.h>
 #include <memory>
+#include "..\Utilities\xml.h"
 
 class CPolygon :
 	public CShape
@@ -16,6 +17,9 @@ public:
 	virtual void Save(CArchive& ar);
 	virtual void Load(CArchive& ar);
 	virtual void OnSetRect();
+
+	virtual void Save(Utilities::CXmlElement& element) override;
+	virtual void Load(Utilities::CXmlElement& element) override;
 
 	void AddPoint(Gdiplus::Point point);
 	void SetPoint(unsigned int index, Gdiplus::Point point);

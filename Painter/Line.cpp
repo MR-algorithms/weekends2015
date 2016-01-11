@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Line.h"
+#include "..\Utilities\xml.h"
 
 using namespace Gdiplus;
 
@@ -41,10 +42,33 @@ void CLine::Save(CArchive& ar)
 	ar << _point1.X << _point1.Y << _point2.X << _point2.Y;
 }
 
+void CLine::Save(Utilities::CXmlElement& element)
+{
+	_rect.X = _point1.X;
+	_rect.Y = _point1.Y;
+	_rect.Width = _point2.X - _point1.X;
+	_rect.Height =  _point2.Y - _point1.Y;
+	element.SetAttrib(_T("Type"), _T("Line"));
+	element.SetIntegerAttrib(_T("Point1X"), _point1.X);
+	element.SetIntegerAttrib(_T("Point1Y"), _point1.Y);
+	element.SetIntegerAttrib(_T("Point2X"),_point2.X);
+	element.SetIntegerAttrib(_T("Point2Y"),_point2.Y);
+	__super::Save(element);
+}
+
 void CLine::Load(CArchive& ar)
 {
 	CShape::Load(ar);
  	ar >> _point1.X >> _point1.Y >> _point2.X >> _point2.Y;
+}
+
+void CLine::Load(Utilities::CXmlElement& element)
+{
+	__super::Load(element);
+	_point1.X = element.GetIntegerAttrib(_T("Point1X"));
+	_point1.Y = element.GetIntegerAttrib(_T("Point1Y"));
+	_point2.X = element.GetIntegerAttrib(_T("Point2X"));
+	_point2.Y = element.GetIntegerAttrib(_T("Point2Y"));
 }
 
 int CLine::HitTest(const Gdiplus::Point& point)

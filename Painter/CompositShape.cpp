@@ -1,6 +1,15 @@
 #include "stdafx.h"
 #include "CompositShape.h"
 #include <iterator>
+#include "..\Utilities\xml.h"
+#include "PainterDoc.h"
+#include "Shape.h"
+#include <memory>
+#include "Polygon.h"
+#include "Line.h"
+#include "Ellipse.h"
+#include "Rectangle.h"
+#include <gdiplus.h>
 
 using namespace Gdiplus;
 
@@ -25,13 +34,93 @@ void CCompositShape::Draw(Gdiplus::Graphics& graphics)
 
 void CCompositShape::Save(CArchive& ar)
 {
-	throw std::logic_error("The method or operation is not implemented.");
+	ar << (int)ShapeComposite;
+	CShape::Save(ar);
+	for (size_t i = 0; i < _children.size();++i)
+	{
+		_children[i]->Save(ar);
+	}
+
+	
 }
 
 void CCompositShape::Load(CArchive& ar)
 {
-	throw std::logic_error("The method or operation is not implemented.");
+	CShape::Load(ar);
+	size_t shape_count;
+	ar >> shape_count;
+	_children.resize(shape_count);
+	for (size_t i = 0; i < shape_count; ++i)
+	{
+		__super::Load(ar);
+	}
 }
+
+void CCompositShape::Save(Utilities::CXmlElement& element)
+{
+	element.SetAttrib(_T("Type"), _T("Composite"));
+	element.SetIntegerAttrib(_T("ShapeCount"), _children.size());
+	element.SetFloatAttrib(_T("Left"), _rect.GetLeft());
+	element.SetFloatAttrib(_T("Top"), _rect.GetTop());
+	element.SetFloatAttrib(_T("Width"), _rect.Width);
+	element.SetFloatAttrib(_T("Height"),_rect.Height);
+
+	for (size_t i = 0; i < _children.size();++i)
+	{
+		auto ele = element.AddElement(_T("CompositeContent"));
+		_children[i]->Save(*ele);
+		ele->SetFloatAttrib(_T("RelativePLeft"), _relative_postions[i].X);
+		ele->SetFloatAttrib(_T("RelativePTop"), _relative_postions[i].Y);
+		ele->SetFloatAttrib(_T("RelativePWidth"), _relative_postions[i].Width);
+		ele->SetFloatAttrib(_T("RelativePHeight"), _relative_postions[i].Height);
+	}
+}
+
+void CCompositShape::Load(Utilities::CXmlElement& element) 
+{
+	//firstly load the composite tap attribution
+	__super::Load(element);
+	size_t shape_count = element.GetIntegerAttrib(_T("ShapeCount"));
+	//load the child's elements
+	auto composite_elment = element.GetChildElements();
+	std::shared_ptr<CShape> shape;
+	Gdiplus::RectF rectf;
+	_children.clear();
+	for (unsigned int i = 0; i < shape_count; ++i)
+	{
+		auto type = composite_elment[i]->GetAttrib(_T("Type"));
+		if (type == _T("Rectangle"))
+		{
+			shape = std::shared_ptr<CShape>(new CRectangle);
+		}
+		else if (type == _T("Ellipse"))
+		{
+			shape = std::shared_ptr<CShape>(new CEllipse);
+		}
+		else if (type == _T("Line"))
+		{
+			shape = std::shared_ptr<CShape>(new CLine);
+		}
+		else if (type == _T("Polygon"))
+		{
+			shape = std::shared_ptr<CShape>(new CPolygon);
+		}
+		else if (type == _T("Composite"))
+		{
+			shape = std::shared_ptr<CShape>(new CCompositShape);
+		}
+		auto X = composite_elment[i]->GetFloatAttrib(_T("RelativePLeft"));
+		auto Y = composite_elment[i]->GetFloatAttrib(_T("RelativePTop"));
+		auto Width = composite_elment[i]->GetFloatAttrib(_T("RelativePWidth"));
+		auto Height = composite_elment[i]->GetFloatAttrib(_T("RelativePHeight"));
+		rectf = Gdiplus::RectF((REAL)X, (REAL)Y, (REAL)Width, (REAL)Height);
+		_relative_postions.push_back(rectf);
+		shape->Load(*composite_elment[i]);
+		shape->OnSetRect();
+		AddShape(shape);
+	}
+}
+
 
 int CCompositShape::HitTest(const Gdiplus::Point& point)
 {

@@ -33,6 +33,17 @@ void CEllipse::Save(CArchive& ar)
 	CShape::Save(ar);
 }
 
+void CEllipse::Save(Utilities::CXmlElement& element)
+{
+	element.SetAttrib(_T("Type"), _T("Ellipse"));
+	__super::Save(element);
+}
+
+void CEllipse::Load(Utilities::CXmlElement& element)
+{
+	__super::Load(element);
+}
+
 int CEllipse::HitTest(const Gdiplus::Point& point)
 {
 	double a = _rect.Width / 2;

@@ -43,8 +43,8 @@ void CRectangle::Save(CArchive& ar)
 
 void CRectangle::Save(Utilities::CXmlElement& element)
 {
-	__super::Save(element);
 	element.SetAttrib(_T("Type"), _T("Rectangle"));
+	__super::Save(element);
 }
 
 void CRectangle::Load(Utilities::CXmlElement& element)

@@ -34,7 +34,7 @@ bool CLineTool::OnMouseMove(UINT nFlags, CPoint point)
 		Gdiplus::Point p1 = _line->GetPoint1();
 		CPoint point1(p1.X, p1.Y);
 		CRect rect(point1, point);
-		rect.NormalizeRect();
+		//rect.NormalizeRect();
 
 		_line->SetRect(Gdiplus::Rect(rect.left, rect.top, rect.Width(), rect.Height()));
 

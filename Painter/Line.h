@@ -26,7 +26,8 @@ public:
 	virtual void Save(CArchive& ar);
 	virtual void Load(CArchive& ar);
 	virtual void OnSetRect();
-
+	virtual void Save(Utilities::CXmlElement& element) override;
+	virtual void Load(Utilities::CXmlElement& element) override;
 	virtual int HitTest(const Gdiplus::Point& point) override;
 
 private:

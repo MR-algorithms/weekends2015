@@ -10,6 +10,7 @@ enum ShapeType
 	ShapeRectangle = 2,
 	ShapeEllipse = 3,
 	ShapePolygon = 4,
+	ShapeComposite = 5,
 };
 
 const int HandleNone = 0;
