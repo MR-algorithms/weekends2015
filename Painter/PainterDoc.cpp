@@ -291,14 +291,20 @@ void CPainterDoc::Copy()
 		{
 			auto child_element = xml.AddElement(SHAPE);
 			shape->Save(*child_element);
+			
 		}
 	}
+	
 
 	CClipboard::SetClipboardText(xml.GetDoc());
 }
 
 void CPainterDoc::Paste()
 {
+	for (auto shape : _shapes)
+	{
+		shape->Select(false);
+	}
 	auto contents = CClipboard::GetClipboardText();
 	CXml xml;
 	xml.SetDoc(contents);
@@ -308,12 +314,16 @@ void CPainterDoc::Paste()
 	shared_ptr<CShape> shape;
 	for (auto child : children)
 	{
+		
 		auto type = child->GetAttrib(_T("Type"));
 		shape = _shape_factory->CreateShape(type);
+		
 
 		shape->Load(*child);
 		_shapes.push_back(shape);
+		shape->Select(true);
 	}
+
 }
 
 // CPainterDoc commands
