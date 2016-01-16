@@ -3,6 +3,10 @@
 #include "..\Utilities\xml.h"
 
 using namespace Gdiplus;
+const TCHAR * POINT1X = _T("Point1X");
+const TCHAR * POINT1Y = _T("Point1Y");
+const TCHAR * POINT2X = _T("Point2X");
+const TCHAR * POINT2Y = _T("Point2Y");
 
 CLine::CLine()
 {
@@ -48,11 +52,11 @@ void CLine::Save(Utilities::CXmlElement& element)
 	_rect.Y = _point1.Y;
 	_rect.Width = _point2.X - _point1.X;
 	_rect.Height =  _point2.Y - _point1.Y;
-	element.SetAttrib(_T("Type"), _T("Line"));
-	element.SetIntegerAttrib(_T("Point1X"), _point1.X);
-	element.SetIntegerAttrib(_T("Point1Y"), _point1.Y);
-	element.SetIntegerAttrib(_T("Point2X"),_point2.X);
-	element.SetIntegerAttrib(_T("Point2Y"),_point2.Y);
+	element.SetAttrib(TYPE, LINE);
+	element.SetIntegerAttrib(POINT1X, _point1.X);
+	element.SetIntegerAttrib(POINT1Y, _point1.Y);
+	element.SetIntegerAttrib(POINT2X,_point2.X);
+	element.SetIntegerAttrib(POINT2Y,_point2.Y);
 	__super::Save(element);
 }
 
@@ -65,10 +69,10 @@ void CLine::Load(CArchive& ar)
 void CLine::Load(Utilities::CXmlElement& element)
 {
 	__super::Load(element);
-	_point1.X = element.GetIntegerAttrib(_T("Point1X"));
-	_point1.Y = element.GetIntegerAttrib(_T("Point1Y"));
-	_point2.X = element.GetIntegerAttrib(_T("Point2X"));
-	_point2.Y = element.GetIntegerAttrib(_T("Point2Y"));
+	_point1.X = element.GetIntegerAttrib(POINT1X);
+	_point1.Y = element.GetIntegerAttrib(POINT1Y);
+	_point2.X = element.GetIntegerAttrib(POINT2X);
+	_point2.Y = element.GetIntegerAttrib(POINT2Y);
 }
 
 int CLine::HitTest(const Gdiplus::Point& point)
@@ -96,10 +100,29 @@ int CLine::HitTest(const Gdiplus::Point& point)
 	
 }
 
+
 CShape * CLine::Clone()
 {
 	CLine * line = new CLine;
 	*line = *this;
 	
 	return line;
+}
+
+void CLine::DrawBorder(Gdiplus::Graphics & graphics)
+{
+	Rect rect = _rect;
+	Pen pen(GetBorderColor());
+	NormalizeRect(rect);
+
+	if (_selected)
+	{
+		graphics.DrawLine(&pen, _point1, _point2);
+		Pen pen(Color::Black);
+
+		// draw handles
+		DrawHandle(graphics, pen, _point1.X, _point1.Y);
+		DrawHandle(graphics, pen, _point2.X, _point2.Y);
+		DrawHandle(graphics, pen, (_point1.X + _point2.X) / 2, (_point1.Y + _point2.Y) / 2);
+	}
 }

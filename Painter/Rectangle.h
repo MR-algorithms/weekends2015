@@ -49,6 +49,7 @@ public:
 
 	virtual CShape * Clone() override;
 
+	const TCHAR * RECTANGLE = _T("Rectangle");
 private:
 	Gdiplus::Point _top_left;
 	Gdiplus::Size _size;

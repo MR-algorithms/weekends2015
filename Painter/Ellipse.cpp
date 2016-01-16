@@ -2,6 +2,8 @@
 #include "Ellipse.h"
 
 
+
+
 CEllipse::CEllipse()
 {
 }
@@ -35,7 +37,7 @@ void CEllipse::Save(CArchive& ar)
 
 void CEllipse::Save(Utilities::CXmlElement& element)
 {
-	element.SetAttrib(_T("Type"), _T("Ellipse"));
+	element.SetAttrib(TYPE,ELLIPSE);
 	__super::Save(element);
 }
 

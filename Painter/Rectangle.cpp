@@ -4,6 +4,7 @@
 
 using namespace Gdiplus;
 
+
 CRectangle::CRectangle()
 {
 }
@@ -43,7 +44,7 @@ void CRectangle::Save(CArchive& ar)
 
 void CRectangle::Save(Utilities::CXmlElement& element)
 {
-	element.SetAttrib(_T("Type"), _T("Rectangle"));
+	element.SetAttrib(TYPE, RECTANGLE);
 	__super::Save(element);
 }
 

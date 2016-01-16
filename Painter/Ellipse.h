@@ -20,6 +20,7 @@ public:
 	virtual int HitTest(const Gdiplus::Point& point) override;
 
 	virtual CShape * Clone() override;
+	const TCHAR * ELLIPSE = _T("Ellipse");
 
 private:
 };

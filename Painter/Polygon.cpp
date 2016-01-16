@@ -5,6 +5,9 @@
 
 
 using namespace Gdiplus;
+const TCHAR * POINTCOUNT = _T("PointCount");
+
+
 
 CPolygon::CPolygon()
 {
@@ -69,8 +72,8 @@ void CharToTchar(const char * cchar, TCHAR * tchar)
 
 void CPolygon::Save(Utilities::CXmlElement& element)
 {
-	element.SetAttrib(_T("Type"), _T("Polygon"));
-	element.SetIntegerAttrib(_T("PointCount"), _points.size());
+	element.SetAttrib(TYPE, POLYGON);
+	element.SetIntegerAttrib(POINTCOUNT, _points.size());
 	for (auto i = 0; i < _points.size(); ++i)
 	{
 		//value size_t type converts to const char* type 
@@ -90,17 +93,17 @@ void CPolygon::Save(Utilities::CXmlElement& element)
 		element.SetIntegerAttrib(tcharx, _points[i].X);
 		element.SetIntegerAttrib(tchary, _points[i].Y);
 	}
-	element.SetIntegerAttrib(_T("BorderColor"), int(_border_color.ToCOLORREF()));
-	element.SetIntegerAttrib(_T("FillColor"), int(_fill_color.ToCOLORREF()));
+	element.SetIntegerAttrib(BORDERCOLOR, int(_border_color.ToCOLORREF()));
+	element.SetIntegerAttrib(FILLCOLOR, int(_fill_color.ToCOLORREF()));
 }
 
 void CPolygon::Load(Utilities::CXmlElement& element)
 {
 	__super::Load(element);
-	auto point_count = element.GetIntegerAttrib(_T("PointCount"));
+	auto point_count = element.GetIntegerAttrib(POINTCOUNT);
 	_points.clear();
 	Gdiplus::Point point;
-	for (size_t i = 0; i < point_count;++i)
+	for (size_t i = 0; i < point_count; ++i)
 	{
 		//value size_t type converts to const char* type 
 		char* Indexx = new char;

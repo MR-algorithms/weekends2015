@@ -29,9 +29,9 @@ public:
 	virtual void Save(Utilities::CXmlElement& element) override;
 	virtual void Load(Utilities::CXmlElement& element) override;
 	virtual int HitTest(const Gdiplus::Point& point) override;
-
+	virtual void DrawBorder(Gdiplus::Graphics& graphics) override;
 	virtual CShape * Clone() override;
-
+	const TCHAR * LINE = _T("Line");
 private:
 	Gdiplus::Point _point1;
 	Gdiplus::Point _point2;

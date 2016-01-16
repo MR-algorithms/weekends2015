@@ -5,6 +5,7 @@
 
 using namespace Gdiplus;
 
+
 CShape::CShape() :
 	_border_color(Gdiplus::Color(0, 255, 0)),
 	_fill_color(Gdiplus::Color(192, 255, 192)),
@@ -54,27 +55,27 @@ void CShape::Load(CArchive& ar)
 
 void CShape::Save(Utilities::CXmlElement& element)
 {
-	element.SetIntegerAttrib(_T("Left"), _rect.GetLeft());
-	element.SetIntegerAttrib(_T("Top"), _rect.GetTop());
-	element.SetIntegerAttrib(_T("Width"), _rect.Width);
-	element.SetIntegerAttrib(_T("Height"), _rect.Height);
+	element.SetIntegerAttrib(LEFT, _rect.GetLeft());
+	element.SetIntegerAttrib(TOP, _rect.GetTop());
+	element.SetIntegerAttrib(WIDTH, _rect.Width);
+	element.SetIntegerAttrib(HEIGHT, _rect.Height);
 
-	element.SetIntegerAttrib(_T("BorderColor"), int(_border_color.ToCOLORREF()));
-	element.SetIntegerAttrib(_T("FillColor"), int(_fill_color.ToCOLORREF()));
+	element.SetIntegerAttrib(BORDERCOLOR, int(_border_color.ToCOLORREF()));
+	element.SetIntegerAttrib(FILLCOLOR, int(_fill_color.ToCOLORREF()));
 }
 
 void CShape::Load(Utilities::CXmlElement& element)
 {
-	auto left = element.GetIntegerAttrib(_T("Left"));
-	auto top = element.GetIntegerAttrib(_T("Top"));
-	auto width = element.GetIntegerAttrib(_T("Width"));
-	auto height = element.GetIntegerAttrib(_T("Height"));
+	auto left = element.GetIntegerAttrib(LEFT);
+	auto top = element.GetIntegerAttrib(TOP);
+	auto width = element.GetIntegerAttrib(WIDTH);
+	auto height = element.GetIntegerAttrib(HEIGHT);
 	_rect = Rect(left, top, width, height);
 
-	auto border_color = element.GetIntegerAttrib(_T("BorderColor"));
+	auto border_color = element.GetIntegerAttrib(BORDERCOLOR);
 	_border_color.SetFromCOLORREF(border_color);
 
-	auto fill_color = element.GetIntegerAttrib(_T("FillColor"));
+	auto fill_color = element.GetIntegerAttrib(FILLCOLOR);
 	_fill_color.SetFromCOLORREF(fill_color);
 }
 

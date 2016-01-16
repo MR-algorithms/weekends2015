@@ -30,6 +30,7 @@ public:
 	void UpdateRelativePostions();
 
 	virtual CShape * Clone() override;
+	const TCHAR * COMPOSITE = _T("Composite");
 
 private:
 	std::vector<std::shared_ptr<CShape>> _children;

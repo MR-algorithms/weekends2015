@@ -36,6 +36,7 @@ public:
 	virtual void Move(int handle_to_move, int cx, int cy) override;
 
 	virtual CShape * Clone() override;
+	const TCHAR * POLYGON = _T("Polygon");
 
 private:
 	std::vector<Gdiplus::Point> _points;
