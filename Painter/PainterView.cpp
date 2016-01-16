@@ -423,12 +423,15 @@ void CPainterView::OnEditCopy()
 {
 	auto doc = GetDocument();
 	ASSERT(doc != nullptr);
-
-	doc->Copy();
+	if (doc->CanCopy())
+	{
+		doc->Copy();
+	}
 }
 
 void CPainterView::OnUpdateEditCopy(CCmdUI *pCmdUI)
 {
+	pCmdUI->Enable(GetDocument()->CanCopy());
 	// TODO: Add your command update UI handler code here
 }
 
@@ -436,8 +439,10 @@ void CPainterView::OnEditPaste()
 {
 	auto doc = GetDocument();
 	ASSERT(doc != nullptr);
-
-	doc->Paste();
+	if (doc->CanPaste())
+	{
+		doc->Paste();
+	}
 
 	Invalidate(FALSE);
 	UpdateWindow();
@@ -445,5 +450,6 @@ void CPainterView::OnEditPaste()
 
 void CPainterView::OnUpdateEditPaste(CCmdUI *pCmdUI)
 {
+	pCmdUI->Enable(GetDocument()->CanPaste());
 	// TODO: Add your command update UI handler code here
 }
