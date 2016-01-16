@@ -18,6 +18,7 @@
 class CShape;
 class CLine;
 class CRectangle;
+class CShapeFactory;
 
 class CPainterDoc : public CDocument
 {
@@ -38,6 +39,12 @@ public:
 	bool Group();
 	bool Ungroup();
 	bool Cut();
+
+	void Copy();
+	void Paste();
+	bool CanCopy();
+	bool CanPaste();
+
 #ifdef SHARED_HANDLERS
 	virtual void InitializeSearchContent();
 	virtual void OnDrawThumbnail(CDC& dc, LPRECT lprcBounds);
@@ -69,4 +76,6 @@ protected:
 
 private:
 	std::vector<std::shared_ptr<CShape>> _shapes;
+	std::shared_ptr<CShapeFactory> _shape_factory;
+
 };

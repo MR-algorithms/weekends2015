@@ -75,6 +75,10 @@ BEGIN_MESSAGE_MAP(CPainterView, CView)
 	ON_UPDATE_COMMAND_UI(ID_BUTTON_UNGROUP, &CPainterView::OnUpdateButtonUngroup)
 	ON_UPDATE_COMMAND_UI(ID_BUTTON_COMBINE, &CPainterView::OnUpdateButtonGroup)
 	ON_COMMAND(ID_EDIT_CUT, &CPainterView::OnEditCut)
+	ON_COMMAND(ID_EDIT_COPY, &CPainterView::OnEditCopy)
+	ON_COMMAND(ID_EDIT_PASTE, &CPainterView::OnEditPaste)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_COPY, &CPainterView::OnUpdateEditCopy)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_PASTE, &CPainterView::OnUpdateEditPaste)
 END_MESSAGE_MAP()
 
 // CPainterView construction/destruction
@@ -412,4 +416,34 @@ void CPainterView::OnEditCut()
 	UpdateWindow();
 	
 	// TODO: Add your command handler code here
+}
+
+
+void CPainterView::OnEditCopy()
+{
+	auto doc = GetDocument();
+	ASSERT(doc != nullptr);
+
+	doc->Copy();
+}
+
+void CPainterView::OnUpdateEditCopy(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+}
+
+void CPainterView::OnEditPaste()
+{
+	auto doc = GetDocument();
+	ASSERT(doc != nullptr);
+
+	doc->Paste();
+
+	Invalidate(FALSE);
+	UpdateWindow();
+}
+
+void CPainterView::OnUpdateEditPaste(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
 }

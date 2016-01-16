@@ -31,6 +31,8 @@
 #include "CompositShape.h"
 #include <iterator>
 #include "../Utilities/xml.h"
+#include "../Utilities/Clipboard.h"
+#include "ShapeFactory.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -52,8 +54,7 @@ END_MESSAGE_MAP()
 
 CPainterDoc::CPainterDoc()
 {
-	// TODO: add one-time construction code here
-
+	_shape_factory = shared_ptr<CShapeFactory>(new CShapeFactory);
 }
 
 CPainterDoc::~CPainterDoc()
@@ -110,26 +111,7 @@ void CPainterDoc::Serialize(CArchive& ar)
 		for (unsigned int i = 0; i < count; ++i)
 		{
 			auto type = shape_elements[i]->GetAttrib(_T("Type"));
-			if (type == _T("Rectangle"))
-			{
-				shape = shared_ptr<CShape>(new CRectangle);
-			}
-			else if (type == _T("Ellipse"))
-			{
-				shape = shared_ptr<CShape>(new CEllipse);
-			}
-			else if (type == _T("Line"))
-			{
-				shape = shared_ptr<CShape>(new CLine);
-			}
-			else if (type == _T("Polygon"))
-			{
-				shape = shared_ptr<CShape>(new CPolygon);
-			}
-			else if (type == _T("Composite"))
-			{
-				shape = shared_ptr<CShape>(new CCompositShape);
-			}
+			shape = _shape_factory->CreateShape(type);
 
 			shape->Load(*shape_elements[i]);
 			_shapes.push_back(shape);
@@ -286,10 +268,46 @@ bool CPainterDoc::Cut()
 			++iter;
 		}
 	}
-	
-
 
 	return true;
+}
+
+const TCHAR* SHAPES = _T("Shapes");
+const TCHAR* SHAPE = _T("Shape");
+
+void CPainterDoc::Copy()
+{
+	CXml xml(SHAPES);
+
+	for (auto shape : _shapes)
+	{
+		if (shape->IsSelected())
+		{
+			auto child_element = xml.AddElement(SHAPE);
+			shape->Save(*child_element);
+		}
+	}
+
+	CClipboard::SetClipboardText(xml.GetDoc());
+}
+
+void CPainterDoc::Paste()
+{
+	auto contents = CClipboard::GetClipboardText();
+	CXml xml;
+	xml.SetDoc(contents);
+
+	auto children = xml.GetChildElements();
+
+	shared_ptr<CShape> shape;
+	for (auto child : children)
+	{
+		auto type = child->GetAttrib(_T("Type"));
+		shape = _shape_factory->CreateShape(type);
+
+		shape->Load(*child);
+		_shapes.push_back(shape);
+	}
 }
 
 // CPainterDoc commands

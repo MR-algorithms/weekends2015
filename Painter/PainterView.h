@@ -102,6 +102,10 @@ public:
 	afx_msg void OnUpdateButtonUngroup(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateButtonGroup(CCmdUI *pCmdUI);
 	afx_msg void OnEditCut();
+	afx_msg void OnEditCopy();
+	afx_msg void OnEditPaste();
+	afx_msg void OnUpdateEditCopy(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateEditPaste(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in PainterView.cpp

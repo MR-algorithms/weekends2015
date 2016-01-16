@@ -13,9 +13,9 @@
 #ifndef Clipboard_h__20110214
 #define Clipboard_h__20110214
 
-#include <atlstr.h>
-
 #pragma once
+#include <afx.h>
+
 namespace Utilities
 {
 	class CClipboard
