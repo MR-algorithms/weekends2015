@@ -45,6 +45,7 @@ local.properties
 *.suo
 *.user
 *.sln.docstates
+*.opendb
 
 # Build results
 
@@ -82,6 +83,7 @@ build/
 *.pidb
 *.log
 *.scc
+*.res
 
 # Visual C++ cache files
 ipch/
@@ -219,3 +221,4 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+Painter/Ellipse.h

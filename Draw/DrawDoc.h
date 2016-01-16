@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include <vector>
+#include <complex>
 
 class CDrawDoc : public CDocument
 {
@@ -22,11 +24,9 @@ protected: // create from serialization only
 	CDrawDoc();
 	DECLARE_DYNCREATE(CDrawDoc)
 
-// Attributes
 public:
-
-// Operations
-public:
+	std::vector<double> GetTimeSeries();
+	std::vector<std::complex<double>> GetData();
 
 // Overrides
 public:

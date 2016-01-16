@@ -15,6 +15,7 @@
 #pragma once
 #include <vector>
 #include <complex>
+#include "PlotWnd.h"
 
 class CDrawView : public CView
 {
@@ -47,22 +48,34 @@ public:
 #endif
 
 protected:
-	std::vector<std::complex<double>> GenerateData(double m0, double t2, double freq, const std::vector<double>& time );
 	std::vector<double> GetReal(const std::vector<std::complex<double>>& source);
 	std::vector<double> GetImage(const std::vector<std::complex<double>>& source);
 	std::vector<double> GetAmplitude(const std::vector<std::complex<double>>& source);
-	std::vector<double> CoordinateTransform(double source_min, double source_max, double dest_min, double dest_max,
-		const std::vector<double>& source);
-	void DrawLines(Gdiplus::Graphics& graphics, const std::vector<double>& x, const std::vector<double>& y);
-	void Draw1(Gdiplus::Graphics& graphics);
-	void Draw2(Gdiplus::Graphics& graphics);
 
 	// Generated message map functions
 protected:
 	afx_msg void OnFilePrintPreview();
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+
 	DECLARE_MESSAGE_MAP()
+
+	CPlotWnd _plot_window;
+	bool _show_real;
+	bool _show_imaginary;
+	bool _show_magnitude;
+
+public:
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnCheckImaginary();
+	afx_msg void OnUpdateCheckImaginary(CCmdUI *pCmdUI);
+	afx_msg void OnCheckMagnitude();
+	afx_msg void OnUpdateCheckMagnitude(CCmdUI *pCmdUI);
+	afx_msg void OnCheckReal();
+	afx_msg void OnUpdateCheckReal(CCmdUI *pCmdUI);
+
+
 };
 
 #ifndef _DEBUG  // debug version in DrawView.cpp

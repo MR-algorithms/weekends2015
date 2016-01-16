@@ -22,7 +22,8 @@
 #include "DrawDoc.h"
 #include "DrawView.h"
 
-#include <gdiplus.h>
+#include "MrSimulator.h"
+#include "DataGenerator.h"
 using namespace Gdiplus;
 
 #ifdef _DEBUG
@@ -41,14 +42,23 @@ BEGIN_MESSAGE_MAP(CDrawView, CView)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CDrawView::OnFilePrintPreview)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
+	ON_WM_CREATE()
+	ON_WM_SIZE()
+	ON_COMMAND(ID_CHECK_IMAGINARY, &CDrawView::OnCheckImaginary)
+	ON_UPDATE_COMMAND_UI(ID_CHECK_IMAGINARY, &CDrawView::OnUpdateCheckImaginary)
+	ON_COMMAND(ID_CHECK_MAGNITUDE, &CDrawView::OnCheckMagnitude)
+	ON_UPDATE_COMMAND_UI(ID_CHECK_MAGNITUDE, &CDrawView::OnUpdateCheckMagnitude)
+	ON_COMMAND(ID_CHECK_REAL, &CDrawView::OnCheckReal)
+	ON_UPDATE_COMMAND_UI(ID_CHECK_REAL, &CDrawView::OnUpdateCheckReal)
 END_MESSAGE_MAP()
 
 // CDrawView construction/destruction
 
-CDrawView::CDrawView()
+CDrawView::CDrawView() :
+	_show_real(true),
+	_show_imaginary(true),
+	_show_magnitude(true)
 {
-	// TODO: add construction code here
-
 }
 
 CDrawView::~CDrawView()
@@ -67,93 +77,6 @@ BOOL CDrawView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CDrawView::OnDraw(CDC* pDC)
 {
-	CDrawDoc* pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-		return;
-
-	Graphics my_graphics(pDC->m_hDC);
-	Draw1(my_graphics);
-//	Draw2(my_graphics);
-}
-
-void CDrawView::Draw1(Graphics& graphics)
-{
-	CRect client_rect;
-	GetClientRect(client_rect);
-
-	std::vector<double> time(1000);
-
-	for (unsigned int i = 0; i < 1000; i++)
-	{
-		time[i] = 0.01 * i;
-	}
-
-	auto m = GenerateData(100, 2, 2, time);
-	auto real_part = GetReal(m);
-	auto image_part = GetImage(m);
-	auto amplitude = GetAmplitude(m);
-
-	auto x_coodinates = CoordinateTransform(0, 10.0, 0, client_rect.Width(), time);
-	auto y_coodinates = CoordinateTransform(-100.0, 100.0, client_rect.Height() / 2, 0, real_part);
-//	auto y_coodinate_imaginary = CoordinateTransform(-100.0, 100.0,
-//		client_rect.Height(), client_rect.Height() / 2, image_part);
-	auto y_coodinate_amplitude = CoordinateTransform(0, 100.0, client_rect.Height(), client_rect.Height() / 2, amplitude);
-
-	DrawLines(graphics, x_coodinates, y_coodinates);
-	DrawLines(graphics, x_coodinates, y_coodinate_amplitude);
-
-//	DrawLines(graphics, x_coodinates, y_coodinate_imaginary);
-}
-
-void CDrawView::Draw2(Graphics& graphics)
-{
-	CRect client_rect;
-	GetClientRect(client_rect);
-
-	// ×ö»­²¼
-	Bitmap bitmap(client_rect.Width(), client_rect.Height(), &graphics);
-	Gdiplus::Graphics buffer_graphics(&bitmap);
-	SolidBrush BKbrush(Color::White);
-	buffer_graphics.FillRectangle(&BKbrush, 0, 0, client_rect.Width(), client_rect.Height());
-
-	std::vector<double> time(1000);
-
-	for (unsigned int i = 0; i < 1000; i++)
-	{
-		time[i] = 0.01 * i;
-	}
-
-	auto m = GenerateData(100, 1, 2, time);
-	auto real_part = GetReal(m);
-	auto image_part = GetImage(m);
-
-	auto x_coodinates = CoordinateTransform(-100, 100, 0, client_rect.Width(), real_part);
-	auto y_coodinates = CoordinateTransform(-100.0, 100.0, client_rect.Height(), 0, image_part);
-
-	DrawLines(buffer_graphics, x_coodinates, y_coodinates);
-
-	graphics.DrawImage(&bitmap, client_rect.left, client_rect.top, client_rect.right, client_rect.bottom);
-}
-
-std::vector<std::complex<double>> CDrawView::GenerateData(double m0,
-	double t2,
-	double freq,
-	const std::vector<double>& time)
-{
-	const double PI = 3.1415926535897932384626433832795;
-
-	std::vector<std::complex<double>> output;
-	output.resize(time.size());
-
-	std::complex<double> I(0, 1);
-
-	for (unsigned int i = 0; i < time.size(); ++i)
-	{
-		output[i] = m0 * exp(-time[i] / t2) * exp(I * 2.0 * PI * freq * time[i]);
-	}
-
-	return output;
 }
 
 std::vector<double> CDrawView::GetReal(const std::vector<std::complex<double>>& source)
@@ -189,43 +112,7 @@ std::vector<double> CDrawView::GetAmplitude(const std::vector<std::complex<doubl
 	return output;
 }
 
-std::vector<double> CDrawView::CoordinateTransform(double source_min,
-	double source_max,
-	double dest_min,
-	double dest_max,
-	const std::vector<double>& source)
-{
-	std::vector<double> output(source.size());
-
-	double a = (dest_max - dest_min) / (source_max - source_min);
-	double b = -source_min * a + dest_min;
-
-	for (unsigned int i = 0; i < source.size(); ++i)
-	{
-		output[i] = a * source[i] + b;
-	}
-
-	return output;
-}
-
-void CDrawView::DrawLines(Gdiplus::Graphics& graphics,
-	const std::vector<double>& x,
-	const std::vector<double>& y)
-{
-	ASSERT(x.size() == y.size());
-
-	Pen pen(Color::Red);
-
-	for (unsigned int i = 0; i < x.size() - 1; ++i)
-	{
-		graphics.DrawLine(&pen, static_cast<float>(x[i]), y[i], x[i + 1], y[i + 1]);
-	}
-}
-
-
 // CDrawView printing
-
-
 void CDrawView::OnFilePrintPreview()
 {
 #ifndef SHARED_HANDLERS
@@ -285,3 +172,88 @@ CDrawDoc* CDrawView::GetDocument() const // non-debug version is inline
 
 
 // CDrawView message handlers
+
+
+int CDrawView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CView::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	CRect rc;
+	if (_plot_window.Create(NULL, NULL, WS_CHILD | WS_VISIBLE, rc, this, (UINT)-1) == -1)
+		return -1;
+
+	auto doc = GetDocument();
+	if (doc == nullptr)
+		return -1;
+
+	auto time = doc->GetTimeSeries();
+	auto m = doc->GetData();
+
+	auto real_part = GetReal(m);
+	auto imaginary_part = GetImage(m);
+	auto amplitude = GetAmplitude(m);
+
+	_plot_window.AddData(_T("Real"), time, real_part, Color::Red);
+
+	_plot_window.AddData(_T("Imaginary"), time, imaginary_part, Color::Blue);
+	_plot_window.AddData(_T("Magnitude"), time, amplitude, Color::Green);
+
+	return 0;
+}
+
+
+void CDrawView::OnSize(UINT nType, int cx, int cy)
+{
+	CView::OnSize(nType, cx, cy);
+
+	if (nType != SIZE_RESTORED && nType != SIZE_MAXIMIZED)
+		return;
+
+	if (cx == 0 || cy == 0)
+		return;
+
+	CRect rect;
+	GetClientRect(rect);
+
+	_plot_window.MoveWindow(rect);
+}
+
+
+void CDrawView::OnCheckImaginary()
+{
+	_show_imaginary = !_show_imaginary;
+	_plot_window.Show(_T("Imaginary"), _show_imaginary);
+}
+
+
+void CDrawView::OnUpdateCheckImaginary(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(_show_imaginary ? 1 : 0);
+}
+
+
+void CDrawView::OnCheckMagnitude()
+{
+	_show_magnitude = !_show_magnitude;
+	_plot_window.Show(_T("Magnitude"), _show_magnitude);
+}
+
+
+void CDrawView::OnUpdateCheckMagnitude(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(_show_magnitude ? 1 : 0);
+}
+
+
+void CDrawView::OnCheckReal()
+{
+	_show_real = !_show_real;
+	_plot_window.Show(_T("Real"), _show_real);
+}
+
+
+void CDrawView::OnUpdateCheckReal(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(_show_real ? 1 : 0);
+}

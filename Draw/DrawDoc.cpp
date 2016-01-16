@@ -22,6 +22,8 @@
 #include "DrawDoc.h"
 
 #include <propkey.h>
+#include "MrSimulator.h"
+#include "DataGenerator.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -143,5 +145,20 @@ void CDrawDoc::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
+std::vector<double> CDrawDoc::GetTimeSeries()
+{
+	return CDataGenerator::GenerateEqualSpacedData(0, 0.01, 1000);
+}
+
+std::vector<std::complex<double>> CDrawDoc::GetData()
+{
+	CMrSimulator simulator;
+	simulator.AddExponentialComponent(100, 1, 2);
+	simulator.AddGaussianComponent(50, 3, 3);
+	auto time = GetTimeSeries();
+
+	return simulator.GenerateData(time);
+	
+}
 
 // CDrawDoc commands
