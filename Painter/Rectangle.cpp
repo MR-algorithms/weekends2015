@@ -52,3 +52,11 @@ void CRectangle::Load(Utilities::CXmlElement& element)
 	__super::Load(element);
 }
 
+CShape * CRectangle::Clone()
+{
+	CRectangle * rect = new CRectangle;
+	*rect = *this;
+	
+	return rect;
+}
+

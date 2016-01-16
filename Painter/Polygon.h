@@ -35,6 +35,8 @@ public:
 
 	virtual void Move(int handle_to_move, int cx, int cy) override;
 
+	virtual CShape * Clone() override;
+
 private:
 	std::vector<Gdiplus::Point> _points;
 	std::vector<Gdiplus::PointF> _relative_points;

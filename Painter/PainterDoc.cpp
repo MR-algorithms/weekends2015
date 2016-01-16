@@ -55,6 +55,12 @@ END_MESSAGE_MAP()
 CPainterDoc::CPainterDoc()
 {
 	_shape_factory = shared_ptr<CShapeFactory>(new CShapeFactory);
+
+	_shape_factory->InsertShape(_T("Rectangle"), shared_ptr<CShape>(new CRectangle));
+	_shape_factory->InsertShape(_T("Ellipse"), shared_ptr<CShape>(new CEllipse));
+	_shape_factory->InsertShape(_T("Line"), shared_ptr<CShape>(new CLine));
+	_shape_factory->InsertShape(_T("Polygon"), shared_ptr<CShape>(new CPolygon));
+	_shape_factory->InsertShape(_T("Composite"), shared_ptr<CShape>(new CCompositShape));
 }
 
 CPainterDoc::~CPainterDoc()

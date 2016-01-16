@@ -61,4 +61,12 @@ int CEllipse::HitTest(const Gdiplus::Point& point)
 		return CShape::HitTest(point);
 }
 
+CShape * CEllipse::Clone()
+{
+	CEllipse * new_shape = new CEllipse;
+	*new_shape = *this;
+
+	return new_shape;
+}
+
 

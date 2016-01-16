@@ -255,3 +255,13 @@ void CShape::OnEndMove()
 {
 	NormalizeRect(_rect);
 }
+
+const CShape& CShape::operator = (const CShape& rhs)
+{
+	_rect = rhs._rect;
+	_border_color = rhs._border_color;
+	_fill_color = rhs._fill_color;
+	_selected = rhs._selected;
+
+	return *this;
+}

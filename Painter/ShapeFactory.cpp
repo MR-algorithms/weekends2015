@@ -1,10 +1,6 @@
 #include "stdafx.h"
 #include "ShapeFactory.h"
-#include "Rectangle.h"
-#include "Ellipse.h"
-#include "line.h"
-#include "Polygon.h"
-#include "CompositShape.h"
+#include "Shape.h"
 
 using namespace std;
 
@@ -19,26 +15,26 @@ CShapeFactory::~CShapeFactory()
 
 std::shared_ptr<CShape> CShapeFactory::CreateShape(const TCHAR * shape_type)
 {
-	if (shape_type == _T("Rectangle"))
+	auto iter = _shapes.find(shape_type);
+	if (iter != _shapes.end())
 	{
-		return shared_ptr<CShape>(new CRectangle);
+		return shared_ptr<CShape>(iter->second->Clone());
 	}
-	else if (shape_type == _T("Ellipse"))
+	else
 	{
-		return  shared_ptr<CShape>(new CEllipse);
+		return shared_ptr<CShape>();
 	}
-	else if (shape_type == _T("Line"))
+}
+
+bool CShapeFactory::InsertShape(const TCHAR * shape_type, std::shared_ptr<CShape> shape)
+{
+	auto iter = _shapes.find(shape_type);
+	if (iter != _shapes.end())
 	{
-		return shared_ptr<CShape>(new CLine);
-	}
-	else if (shape_type == _T("Polygon"))
-	{
-		return shared_ptr<CShape>(new CPolygon);
-	}
-	else if (shape_type == _T("Composite"))
-	{
-		return shared_ptr<CShape>(new CCompositShape);
+		return false;
 	}
 
-	return shared_ptr<CShape>();
+	_shapes.insert(make_pair (CString(shape_type), shape));
+	
+	return true;
 }

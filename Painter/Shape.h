@@ -44,6 +44,7 @@ public:
 	virtual void OnEndMove();
 	virtual void OnSetRect(){}
 	
+	virtual CShape * Clone() = 0;
 
 	void SetRect(const Gdiplus::Rect& rect);
 	const Gdiplus::Rect& GetRect() const;
@@ -53,7 +54,7 @@ public:
 	Gdiplus::Color GetFillColor() const;
 	void Select(bool select);
 	bool IsSelected() const;
-
+	const CShape& operator = (const CShape& rhs);
 protected:
 	virtual void DrawBorder(Gdiplus::Graphics& graphics);
 	void DrawHandle(Gdiplus::Graphics& graphics, Gdiplus::Pen&pen, INT x, INT y);

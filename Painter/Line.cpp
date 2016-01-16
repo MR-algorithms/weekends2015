@@ -95,3 +95,11 @@ int CLine::HitTest(const Gdiplus::Point& point)
 	}
 	
 }
+
+CShape * CLine::Clone()
+{
+	CLine * line = new CLine;
+	*line = *this;
+	
+	return line;
+}

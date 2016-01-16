@@ -269,3 +269,11 @@ void CPolygon::Move(int handle_to_move, int cx, int cy)
 	CShape::Move(handle_to_move, cx, cy);
 }
 
+CShape * CPolygon::Clone()
+{
+	CPolygon * polygon = new CPolygon;
+	*polygon = *this;
+	
+	return polygon;
+}
+

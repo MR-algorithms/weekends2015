@@ -218,3 +218,11 @@ void CCompositShape::OnEndMove()
 
 	NormalizeRect(_rect);
 }
+
+CShape * CCompositShape::Clone()
+{
+	CCompositShape * composite = new CCompositShape;
+	*composite = *this;
+	
+	return composite;
+}

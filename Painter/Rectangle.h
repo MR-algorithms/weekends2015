@@ -47,6 +47,8 @@ public:
 
 	virtual void Load(Utilities::CXmlElement& element) override;
 
+	virtual CShape * Clone() override;
+
 private:
 	Gdiplus::Point _top_left;
 	Gdiplus::Size _size;

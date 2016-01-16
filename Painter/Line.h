@@ -30,6 +30,8 @@ public:
 	virtual void Load(Utilities::CXmlElement& element) override;
 	virtual int HitTest(const Gdiplus::Point& point) override;
 
+	virtual CShape * Clone() override;
+
 private:
 	Gdiplus::Point _point1;
 	Gdiplus::Point _point2;

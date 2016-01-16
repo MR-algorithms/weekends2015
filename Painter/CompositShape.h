@@ -28,6 +28,9 @@ public:
 	void Ungroup(std::vector<std::shared_ptr<CShape>>& parent_container);
 
 	void UpdateRelativePostions();
+
+	virtual CShape * Clone() override;
+
 private:
 	std::vector<std::shared_ptr<CShape>> _children;
 	std::vector<Gdiplus::RectF> _relative_postions;

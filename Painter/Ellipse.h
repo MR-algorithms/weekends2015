@@ -19,6 +19,8 @@ public:
 
 	virtual int HitTest(const Gdiplus::Point& point) override;
 
+	virtual CShape * Clone() override;
+
 private:
 };
 
