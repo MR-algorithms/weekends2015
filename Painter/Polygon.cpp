@@ -71,25 +71,33 @@ void CPolygon::Save(Utilities::CXmlElement& element)
 {
 	element.SetAttrib(_T("Type"), _T("Polygon"));
 	element.SetIntegerAttrib(_T("PointCount"), _points.size());
-	for (auto i = 0; i < _points.size(); ++i)
+	std::vector<int> points;
+// 	for (auto i = 0; i < _points.size(); ++i)
+// 	{
+// 		//value size_t type converts to const char* type 
+// 		char* Indexx=new char;
+// 		itoa(i, Indexx, 10);
+// 		strcat(Indexx, "X");
+// 		const char* Ix = Indexx;
+// 		char* Indexy = new char;
+// 		itoa(i, Indexy, 10);
+// 		strcat(Indexy, "Y");
+// 		const char* Iy = Indexy;
+// 		TCHAR* tcharx = new TCHAR;
+// 		TCHAR* tchary = new TCHAR;
+// 		CharToTchar(Ix, tcharx);
+// 		CharToTchar(Iy, tchary);
+// 		//end
+// 		element.SetIntegerAttrib(tcharx, _points[i].X);
+// 		element.SetIntegerAttrib(tchary, _points[i].Y);
+// 	}
+	for (size_t i = 0; i < _points.size();++i)
 	{
-		//value size_t type converts to const char* type 
-		char* Indexx=new char;
-		itoa(i, Indexx, 10);
-		strcat(Indexx, "X");
-		const char* Ix = Indexx;
-		char* Indexy = new char;
-		itoa(i, Indexy, 10);
-		strcat(Indexy, "Y");
-		const char* Iy = Indexy;
-		TCHAR* tcharx = new TCHAR;
-		TCHAR* tchary = new TCHAR;
-		CharToTchar(Ix, tcharx);
-		CharToTchar(Iy, tchary);
-		//end
-		element.SetIntegerAttrib(tcharx, _points[i].X);
-		element.SetIntegerAttrib(tchary, _points[i].Y);
+		points.push_back(_points[i].X);
+		points.push_back(_points[i].Y);
 	}
+	element.SetVectorAttrib(_T("Points"), points);
+
 	element.SetIntegerAttrib(_T("BorderColor"), int(_border_color.ToCOLORREF()));
 	element.SetIntegerAttrib(_T("FillColor"), int(_fill_color.ToCOLORREF()));
 }
@@ -99,28 +107,12 @@ void CPolygon::Load(Utilities::CXmlElement& element)
 	__super::Load(element);
 	auto point_count = element.GetIntegerAttrib(_T("PointCount"));
 	_points.clear();
-	Gdiplus::Point point;
-	for (size_t i = 0; i < point_count;++i)
+	std::vector<int> points = element.GetVectorAttrib(_T("Points"));
+	
+	ASSERT(points.size() == point_count * 2);			//make sure the points * 2 can be equal to the points' x and y
+	for (size_t i = 0; i < points.size();++(++i))
 	{
-		//value size_t type converts to const char* type 
-		char* Indexx = new char;
-		itoa(i, Indexx, 10);
-		strcat(Indexx, "X");
-		const char* Ix = Indexx;
-		char* Indexy = new char;
-		itoa(i, Indexy, 10);
-		strcat(Indexy, "Y");
-		TCHAR* tcharx = new TCHAR;
-		TCHAR* tchary = new TCHAR;
-		const char* Iy = Indexy;
-		CharToTchar(Ix, tcharx);
-		CharToTchar(Iy, tchary);
-		//end
-		auto X = element.GetIntegerAttrib(tcharx);
-		auto Y = element.GetIntegerAttrib(tchary);
-		point.X = X;
-		point.Y = Y;
-		_points.push_back(point);
+		_points.push_back(Gdiplus::Point(points[i], points[i+1]));
 	}
 	Finalize();
 

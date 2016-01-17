@@ -56,6 +56,7 @@ namespace Utilities
 		int GetIntegerAttrib(const TCHAR* name, int default_value = 0) const;
 		bool GetBoolAttrib(const TCHAR* name, bool default_value = false) const;
 		double GetFloatAttrib(const TCHAR* name, double default_value = 0.0) const;
+		std::vector<int> GetVectorAttrib(const TCHAR* name, std::vector<int> default_value = {0}) const;
 		ATL::CTime GetTimeAttrib(const TCHAR* name) const;
 
 #ifndef NO_MFC
@@ -67,6 +68,7 @@ namespace Utilities
 		void SetBoolAttrib(const TCHAR* name, bool value);
 		void SetFloatAttrib(const TCHAR* name, double value);
 		void SetTimeAttrib(const TCHAR* name, const ATL::CTime& time);
+		void SetVectorAttrib(const TCHAR* name, std::vector<int> value);
 
 		const CString& GetName() const;
 		const CString& GetData() const;

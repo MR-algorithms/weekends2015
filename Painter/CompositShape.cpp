@@ -13,11 +13,17 @@
 #include "ShapeFactory.h"
 
 using namespace Gdiplus;
-
+using namespace std;
 const TCHAR * RELATIVE_LEFT = _T("RelativeLeft");
 
 CCompositShape::CCompositShape()
 {
+	_shape_factory = shared_ptr<CShapeFactory>(new CShapeFactory);
+
+	_shape_factory->InsertShape(_T("Rectangle"), shared_ptr<CShape>(new CRectangle));
+	_shape_factory->InsertShape(_T("Ellipse"), shared_ptr<CShape>(new CEllipse));
+	_shape_factory->InsertShape(_T("Line"), shared_ptr<CShape>(new CLine));
+	_shape_factory->InsertShape(_T("Polygon"), shared_ptr<CShape>(new CPolygon));
 }
 
 
@@ -91,17 +97,15 @@ void CCompositShape::Load(Utilities::CXmlElement& element)
 	Gdiplus::RectF rectf;
 	_children.clear();
 
-	CShapeFactory shape_factory;
-
 	for (unsigned int i = 0; i < shape_count; ++i)
 	{
 		auto type = composite_elment[i]->GetAttrib(_T("Type"));
-		shape = shape_factory.CreateShape(type);
-	
+		shape = _shape_factory->CreateShape(type);
+/*		shape->Load(element);*/
 		auto X = composite_elment[i]->GetFloatAttrib(RELATIVE_LEFT);
-		auto Y = composite_elment[i]->GetFloatAttrib(_T("RelativePTop"));
-		auto Width = composite_elment[i]->GetFloatAttrib(_T("RelativePWidth"));
-		auto Height = composite_elment[i]->GetFloatAttrib(_T("RelativePHeight"));
+		auto Y = composite_elment[i]->GetFloatAttrib(_T("RelativeTop"));
+		auto Width = composite_elment[i]->GetFloatAttrib(_T("RelativeWidth"));
+		auto Height = composite_elment[i]->GetFloatAttrib(_T("RelativeHeight"));
 		rectf = Gdiplus::RectF((REAL)X, (REAL)Y, (REAL)Width, (REAL)Height);
 		_relative_postions.push_back(rectf);
 		shape->Load(*composite_elment[i]);

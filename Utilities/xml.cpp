@@ -357,6 +357,20 @@ void CXmlElement::SetTimeAttrib(const TCHAR* name, const ATL::CTime& time)
 	SetAttrib(name, TimeToString(time));
 }
 
+void CXmlElement::SetVectorAttrib(const TCHAR* name, std::vector<int> value)
+{
+	CString str = "";
+	CString temp;
+	for (auto iter:value)
+	{
+		temp.Format(_T("%d"), iter);
+		str += temp;
+		str += ",";
+	}
+	str.Delete(str.GetLength()-1, 1);
+	SetAttrib(name, str);
+}
+
 const CString& CXmlElement::GetName() const
 {
 	return _name;
@@ -525,6 +539,39 @@ double CXmlElement::GetElementFloat(const TCHAR* name) const
 	}
 
 	return element->GetFloat();
+}
+
+std::vector<int> Utilities::CXmlElement::GetVectorAttrib(const TCHAR* name, std::vector<int> default_value) const
+{
+	CString attrib = GetAttrib(name);
+	if (attrib.IsEmpty())
+		return default_value;
+	errno = EDOM;
+	std::vector<int> value;
+	CString points_str = GetAttrib(name).GetString();
+	const CString comma = ",";
+	std::vector<CString> strvector;
+		points_str.Remove(' ');							//remove the blank space in the points_str
+	for (;;)
+	{
+		CString temp = points_str.SpanExcluding(comma);	//Get the number before every comma
+		strvector.push_back(temp);						//push back the number into the vector
+		points_str.Delete(0,temp.GetLength()+1);		//delete the comma and the number before
+		if (!points_str.GetLength())
+		{
+			break;
+		}
+	}
+	for (auto iter : strvector)
+	{
+		ASSERT( _tstoi(iter) );							//make sure the string can convert to number
+		value.push_back(_tstoi(iter));
+	}
+	if ((value.size() == 0 && attrib != _T("0")) || errno == ERANGE || errno == EINVAL)
+	{
+		return default_value;
+	}
+	return value;
 }
 
 bool CXml::Load(LPCTSTR path)
