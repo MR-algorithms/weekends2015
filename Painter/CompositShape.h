@@ -4,6 +4,8 @@
 #include <memory>
 #include <gdiplus.h>
 
+class CShapeFactory;
+
 class CCompositShape :
 	public CShape
 {
@@ -35,5 +37,6 @@ public:
 private:
 	std::vector<std::shared_ptr<CShape>> _children;
 	std::vector<Gdiplus::RectF> _relative_postions;
+	std::shared_ptr<CShapeFactory>  _shape_factory;
 };
 
