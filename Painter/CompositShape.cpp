@@ -13,11 +13,22 @@
 #include "ShapeFactory.h"
 
 using namespace Gdiplus;
-
+using namespace std;
 const TCHAR * RELATIVE_LEFT = _T("RelativeLeft");
+const TCHAR * RELATIVE_TOP = _T("RelativeTop");
+const TCHAR * RELATIVE_WIDHT = _T("RelativeWidth");
+const TCHAR * RELATIVE_HEIGHT = _T("RelativeHeight");
+const TCHAR * SHAPECOUNT = _T("ShapeCount");
+const TCHAR * COMPOSITECONTENT = _T("CompositeContent");
 
 CCompositShape::CCompositShape()
 {
+	_shape_factory = shared_ptr<CShapeFactory>(new CShapeFactory);
+
+	_shape_factory->InsertShape(_T("Rectangle"), shared_ptr<CShape>(new CRectangle));
+	_shape_factory->InsertShape(_T("Ellipse"), shared_ptr<CShape>(new CEllipse));
+	_shape_factory->InsertShape(_T("Line"), shared_ptr<CShape>(new CLine));
+	_shape_factory->InsertShape(_T("Polygon"), shared_ptr<CShape>(new CPolygon));
 }
 
 
@@ -61,21 +72,21 @@ void CCompositShape::Load(CArchive& ar)
 
 void CCompositShape::Save(Utilities::CXmlElement& element)
 {
-	element.SetAttrib(_T("Type"), _T("Composite"));
-	element.SetIntegerAttrib(_T("ShapeCount"), _children.size());
-	element.SetFloatAttrib(_T("Left"), _rect.GetLeft());
-	element.SetFloatAttrib(_T("Top"), _rect.GetTop());
-	element.SetFloatAttrib(_T("Width"), _rect.Width);
-	element.SetFloatAttrib(_T("Height"),_rect.Height);
+	element.SetAttrib(TYPE, COMPOSITE);
+	element.SetIntegerAttrib(SHAPECOUNT, _children.size());
+	element.SetFloatAttrib(LEFT, _rect.GetLeft());
+	element.SetFloatAttrib(TOP, _rect.GetTop());
+	element.SetFloatAttrib(WIDTH, _rect.Width);
+	element.SetFloatAttrib(HEIGHT,_rect.Height);
 
 	for (size_t i = 0; i < _children.size();++i)
 	{
-		auto child_element = element.AddElement(_T("CompositeContent"));
+		auto child_element = element.AddElement(COMPOSITECONTENT);
 		_children[i]->Save(*child_element);
 		child_element->SetFloatAttrib(RELATIVE_LEFT, _relative_postions[i].X);
-		child_element->SetFloatAttrib(_T("RelativeTop"), _relative_postions[i].Y);
-		child_element->SetFloatAttrib(_T("RelativeWidth"), _relative_postions[i].Width);
-		child_element->SetFloatAttrib(_T("RelativeHeight"), _relative_postions[i].Height);
+		child_element->SetFloatAttrib(RELATIVE_TOP, _relative_postions[i].Y);
+		child_element->SetFloatAttrib(RELATIVE_WIDHT, _relative_postions[i].Width);
+		child_element->SetFloatAttrib(RELATIVE_HEIGHT, _relative_postions[i].Height);
 	}
 }
 
@@ -84,24 +95,32 @@ void CCompositShape::Load(Utilities::CXmlElement& element)
 {
 	//firstly load the composite tap attribution
 	__super::Load(element);
-	size_t shape_count = element.GetIntegerAttrib(_T("ShapeCount"));
+	size_t shape_count = element.GetIntegerAttrib(SHAPECOUNT);
 	//load the child's elements
 	auto composite_elment = element.GetChildElements();
 	std::shared_ptr<CShape> shape;
 	Gdiplus::RectF rectf;
 	_children.clear();
 
-	CShapeFactory shape_factory;
-
 	for (unsigned int i = 0; i < shape_count; ++i)
 	{
-		auto type = composite_elment[i]->GetAttrib(_T("Type"));
+<<<<<<< HEAD
+		auto type = composite_elment[i]->GetAttrib(TYPE);
 		shape = shape_factory.CreateShape(type);
 	
 		auto X = composite_elment[i]->GetFloatAttrib(RELATIVE_LEFT);
-		auto Y = composite_elment[i]->GetFloatAttrib(_T("RelativePTop"));
-		auto Width = composite_elment[i]->GetFloatAttrib(_T("RelativePWidth"));
-		auto Height = composite_elment[i]->GetFloatAttrib(_T("RelativePHeight"));
+		auto Y = composite_elment[i]->GetFloatAttrib(RELATIVE_TOP);
+		auto Width = composite_elment[i]->GetFloatAttrib(RELATIVE_WIDHT);
+		auto Height = composite_elment[i]->GetFloatAttrib(RELATIVE_HEIGHT);
+=======
+		auto type = composite_elment[i]->GetAttrib(_T("Type"));
+		shape = _shape_factory->CreateShape(type);
+/*		shape->Load(element);*/
+		auto X = composite_elment[i]->GetFloatAttrib(RELATIVE_LEFT);
+		auto Y = composite_elment[i]->GetFloatAttrib(_T("RelativeTop"));
+		auto Width = composite_elment[i]->GetFloatAttrib(_T("RelativeWidth"));
+		auto Height = composite_elment[i]->GetFloatAttrib(_T("RelativeHeight"));
+>>>>>>> origin/master
 		rectf = Gdiplus::RectF((REAL)X, (REAL)Y, (REAL)Width, (REAL)Height);
 		_relative_postions.push_back(rectf);
 		shape->Load(*composite_elment[i]);

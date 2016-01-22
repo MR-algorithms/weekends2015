@@ -55,6 +55,14 @@ public:
 	void Select(bool select);
 	bool IsSelected() const;
 	const CShape& operator = (const CShape& rhs);
+
+	const TCHAR * TYPE = _T("Type");
+	const TCHAR * LEFT = _T("Left");
+	const TCHAR * TOP = _T("Top");
+	const TCHAR * WIDTH = _T("Width");
+	const TCHAR * HEIGHT = _T("Height");
+	const TCHAR * BORDERCOLOR = _T("BorderColor");
+	const TCHAR * FILLCOLOR = _T("FillColor");
 protected:
 	virtual void DrawBorder(Gdiplus::Graphics& graphics);
 	void DrawHandle(Gdiplus::Graphics& graphics, Gdiplus::Pen&pen, INT x, INT y);

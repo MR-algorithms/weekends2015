@@ -41,7 +41,15 @@
 using namespace std;
 using namespace Gdiplus;
 using namespace Utilities;
-
+const TCHAR * RECTANGLE = _T("Rectangle");
+const TCHAR * ELLIPSE = _T("Ellipse");
+const TCHAR * LINE = _T("Line");
+const TCHAR * POLYGON = _T("Polygon");
+const TCHAR * COMPOSITE = _T("Composite");
+const TCHAR * SHAPE = _T("Shape");
+const TCHAR* SHAPES = _T("Shapes");
+const TCHAR* COUNT = _T("Count");
+const TCHAR * TYPE = _T("Type");
 // CPainterDoc
 
 IMPLEMENT_DYNCREATE(CPainterDoc, CDocument)
@@ -57,11 +65,11 @@ CPainterDoc::CPainterDoc()
 	CClipboard::SetClipboardText(_T(""));
 	_shape_factory = shared_ptr<CShapeFactory>(new CShapeFactory);
 
-	_shape_factory->InsertShape(_T("Rectangle"), shared_ptr<CShape>(new CRectangle));
-	_shape_factory->InsertShape(_T("Ellipse"), shared_ptr<CShape>(new CEllipse));
-	_shape_factory->InsertShape(_T("Line"), shared_ptr<CShape>(new CLine));
-	_shape_factory->InsertShape(_T("Polygon"), shared_ptr<CShape>(new CPolygon));
-	_shape_factory->InsertShape(_T("Composite"), shared_ptr<CShape>(new CCompositShape));
+	_shape_factory->InsertShape(RECTANGLE, shared_ptr<CShape>(new CRectangle));
+	_shape_factory->InsertShape(ELLIPSE, shared_ptr<CShape>(new CEllipse));
+	_shape_factory->InsertShape(LINE, shared_ptr<CShape>(new CLine));
+	_shape_factory->InsertShape(POLYGON, shared_ptr<CShape>(new CPolygon));
+	_shape_factory->InsertShape(COMPOSITE, shared_ptr<CShape>(new CCompositShape));
 }
 
 CPainterDoc::~CPainterDoc()
@@ -91,12 +99,12 @@ void CPainterDoc::Serialize(CArchive& ar)
 // 		{
 // 			(*shape)->Save(ar);
 // 		}
-		CXml xml(_T("Shapes"));
-		xml.SetIntegerAttrib(_T("Count"), _shapes.size());
+		CXml xml(SHAPE);
+		xml.SetIntegerAttrib(COUNT, _shapes.size());
 
 		for (auto shape : _shapes)
 		{
-			auto element = xml.AddElement(_T("Shape"));
+			auto element = xml.AddElement(SHAPE);
 			shape->Save(*element);
 		}
 		ar << xml.GetDoc();
@@ -111,13 +119,13 @@ void CPainterDoc::Serialize(CArchive& ar)
 		CXml xml;
 		xml.SetDoc(xml_string);
 
-		unsigned count(xml.GetIntegerAttrib(_T("Count")));
+		unsigned count(xml.GetIntegerAttrib(COUNT));
 		auto shape_elements = xml.GetChildElements();
 
 		shared_ptr<CShape> shape;
 		for (unsigned int i = 0; i < count; ++i)
 		{
-			auto type = shape_elements[i]->GetAttrib(_T("Type"));
+			auto type = shape_elements[i]->GetAttrib(TYPE);
 			shape = _shape_factory->CreateShape(type);
 
 			shape->Load(*shape_elements[i]);
@@ -279,8 +287,7 @@ bool CPainterDoc::Cut()
 	return true;
 }
 
-const TCHAR* SHAPES = _T("Shapes");
-const TCHAR* SHAPE = _T("Shape");
+
 
 void CPainterDoc::Copy()
 {
@@ -292,14 +299,20 @@ void CPainterDoc::Copy()
 		{
 			auto child_element = xml.AddElement(SHAPE);
 			shape->Save(*child_element);
+			
 		}
 	}
+	
 
 	CClipboard::SetClipboardText(xml.GetDoc());
 }
 
 void CPainterDoc::Paste()
 {
+	for (auto shape : _shapes)
+	{
+		shape->Select(false);
+	}
 	auto contents = CClipboard::GetClipboardText();
 	CXml xml;
 	xml.SetDoc(contents);
@@ -309,12 +322,20 @@ void CPainterDoc::Paste()
 	shared_ptr<CShape> shape;
 	for (auto child : children)
 	{
+<<<<<<< HEAD
+		auto type = child->GetAttrib(TYPE);
+=======
+		
 		auto type = child->GetAttrib(_T("Type"));
+>>>>>>> origin/master
 		shape = _shape_factory->CreateShape(type);
+		
 
 		shape->Load(*child);
 		_shapes.push_back(shape);
+		shape->Select(true);
 	}
+
 }
 
 bool CPainterDoc::CanCopy()
