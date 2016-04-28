@@ -62,6 +62,7 @@ END_MESSAGE_MAP()
 
 CPainterDoc::CPainterDoc()
 {
+	CClipboard::SetClipboardText(_T(""));
 	_shape_factory = shared_ptr<CShapeFactory>(new CShapeFactory);
 
 	_shape_factory->InsertShape(RECTANGLE, shared_ptr<CShape>(new CRectangle));
@@ -335,6 +336,23 @@ void CPainterDoc::Paste()
 		shape->Select(true);
 	}
 
+}
+
+bool CPainterDoc::CanCopy()
+{
+	for (auto shape : _shapes )
+	{
+		if (shape->IsSelected())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool CPainterDoc::CanPaste()
+{
+	return CClipboard::GetClipboardText().IsEmpty() ? false : true;
 }
 
 // CPainterDoc commands
